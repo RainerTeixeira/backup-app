@@ -1,0 +1,34 @@
+<!-- templates/mysql.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySQL</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="{{ url_for('static', filename='js/mysql.js') }}"></script>
+</head>
+
+
+<body>
+    <div class="container">
+        <h1>Informações do MySQL</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('mysql') }}">MySQL</a></li>
+                <li><a href="{{ url_for('system_info') }}">Informações do Sistema</a></li>
+                <li><a href="{{ url_for('backup') }}">Backup</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+        </nav>
+        <pre id="mysql-status"></pre>
+    </div>
+</body>
+
+<footer>
+    <p>&copy; 2024 Painel de Monitoramento desenvolvido por Rainer Teixeira</p>
+</footer>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

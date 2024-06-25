@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Monitoramento</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+{% include 'header.html' %}
+
+
+    <section class="features">
+        <div class="container">
+            <h2>Principais Funcionalidades</h2>
+            <div class="feature-item">
+                <img src="{{ url_for('static', filename='images/feature-1.png') }}" alt="Feature 1">
+                <h3>Monitoramento em Tempo Real</h3>
+                <p>Acompanhe em tempo real o desempenho do sistema e os recursos utilizados.</p>
+            </div>
+            <div class="feature-item">
+                <img src="{{ url_for('static', filename='images/feature-2.png') }}" alt="Feature 2">
+                <h3>Backup Automático</h3>
+                <p>Realize backups automáticos para garantir a segurança dos seus dados.</p>
+            </div>
+            <div class="feature-item">
+                <img src="{{ url_for('static', filename='images/feature-3.png') }}" alt="Feature 3">
+                <h3>Análise de Dados</h3>
+                <p>Análise detalhada de dados para otimização de desempenho e tomada de decisões.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="about">
+        <div class="container">
+            <h2>Sobre o Sistema</h2>
+            <p>O Sistema de Monitoramento e Backup foi desenvolvido para proporcionar uma gestão eficiente e segura dos recursos de TI da sua empresa.</p>
+            <p>Com funcionalidades avançadas e uma interface intuitiva, você pode gerenciar, monitorar e proteger seus dados de forma eficaz.</p>
+        </div>
+    </section>
+
+    {% include 'footer.html' %}
+
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>

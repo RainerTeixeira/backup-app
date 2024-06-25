@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informações do Sistema</title>
+    
+</head>
+
+
+
+<body>
+
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem-vindo ao Sistema de Monitoramento e Backup</title>
+<!-- Link para o Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/styles.css">
+<script src="/static/js/system_info.js"></script>
+</head>
+
+
+    <header>
+        <div class="container">
+            <h1>Bem-vindo ao Sistema de Monitoramento e Backup</h1>
+            <nav>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-house-door"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mysql">
+                            <i class="bi bi-database"></i> MySQL
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/system-info">
+                            <i class="bi bi-info-circle"></i> Informações do Sistema
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/backup">
+                            <i class="bi bi-cloud-arrow-down-fill"></i> Backup
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+
+
+    <section class="system-info">
+        <div class="container">
+            <div class="card-container">
+                <!-- Cards existentes -->
+                <div class="card">
+                    <h2><i class="bi bi-hdd"></i> Uso do Disco</h2>
+                    <div class="card-content">
+                        <p><span id="disk-usage"></span>%</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-ram"></i> Memória Usada</h2>
+                    <div class="card-content">
+                        <p><span id="memory-usage"></span>%</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-cpu"></i> Uso da CPU</h2>
+                    <div class="card-content">
+                        <p><span id="cpu-usage"></span>%</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-thermometer"></i> Temperatura do Sistema</h2>
+                    <div class="card-content">
+                        <p><span id="system-temperature"></span> °C</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-server"></i> Status do Servidor</h2>
+                    <div class="card-content" id="service-status">
+                        <p>Carregando...</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-terminal"></i> Versão do Sistema Operacional</h2>
+                    <div class="card-content">
+                        <p id="os-version">Carregando...</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-server"></i> Utilização da Rede</h2>
+                    <div class="card-content">
+                        <p><span id="network-usage"></span> Mbps</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-tools"></i> Status de Serviços</h2>
+                    <div class="card-content" id="services-status">
+                        <p>Carregando...</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-database"></i> Carga de Trabalho do Banco de Dados</h2>
+                    <div class="card-content">
+                        <p><span id="db-workload"></span> consultas por segundo</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-archive"></i> Status de Backups</h2>
+                    <div class="card-content" id="backup-status">
+                        <p>Carregando...</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-ram"></i> Utilização de Recursos do Sistema</h2>
+                    <div class="card-content" id="system-resources">
+                        <p>Carregando...</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-server"></i> Latência de Rede</h2>
+                    <div class="card-content">
+                        <p><span id="network-latency"></span> ms</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-hdd"></i> Espaço em Disco por Partição</h2>
+                    <div class="card-content" id="disk-partitions">
+                        <p>Carregando...</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-people"></i> Contagem de Usuários Conectados</h2>
+                    <div class="card-content">
+                        <p id="connected-users">Carregando...</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-shield"></i> Status de Segurança</h2>
+                    <div class="card-content" id="security-status">
+                        <p>Carregando...</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-code-slash"></i> Atualizações de Software</h2>
+                    <div class="card-content" id="software-updates">
+                        <p>Carregando...</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-graph-up"></i> Performance de Aplicações Críticas</h2>
+                    <div class="card-content" id="application-performance">
+                        <p>Carregando...</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-database"></i> Latência de Banco de Dados</h2>
+                    <div class="card-content">
+                        <p><span id="db-latency"></span> ms</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-journal"></i> Logs de Eventos</h2>
+                    <div class="card-content" id="event-logs">
+                        <p>Carregando...</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-grid-3x3-gap"></i> Capacidade de Escalabilidade</h2>
+                    <div class="card-content" id="scalability-capacity">
+                        <p>Carregando...</p>
+                    </div>
+                </div>
+                <!-- Novos cards adicionados -->
+                <div class="card">
+                    <h2><i class="bi bi-shield"></i> Configurações de Segurança</h2>
+                    <div class="card-content" id="security-settings">
+                        <p>Carregando...</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-database"></i> Estatísticas do Banco de Dados</h2>
+                    <div class="card-content" id="db-statistics">
+                        <p>Carregando...</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-bar-chart"></i> Estatísticas de Desempenho</h2>
+                    <div class="card-content" id="performance-statistics">
+                        <p>Carregando...</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2><i class="bi bi-code-slash"></i> Código de Versão do Software</h2>
+                    <div class="card-content" id="software-version">
+                        <p>Carregando...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+    <footer>
+    <div class="container">
+        <span class="text-muted">&copy; <span id="currentYear"></span> Painel de Monitoramento desenvolvido por Rainer Teixeira</span>
+    </div>
+</footer>
+
+<script>
+    // JavaScript para atualizar o ano automaticamente
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+</script>
+
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>

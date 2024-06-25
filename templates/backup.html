@@ -1,0 +1,43 @@
+<!-- templates/backup.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Backups Disponíveis</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('mysql') }}">MySQL</a></li>
+                <li><a href="{{ url_for('system_info') }}">Informações do Sistema</a></li>
+                <li><a href="{{ url_for('backup') }}">Backup</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+        </nav>
+        <ul>
+            {% for filename in backups %}
+                <li>
+                    <a href="{{ url_for('download_backup', filename=filename) }}">{{ filename }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+        <h2>Fazer Backup Manual</h2>
+        <form action="{{ url_for('upload_backup') }}" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" id="file" required>
+            <button type="submit">Enviar Backup</button>
+        </form>
+    </div>
+</body>
+
+
+{% include 'footer.html' %}
+
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
