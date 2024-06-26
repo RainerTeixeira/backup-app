@@ -4,3 +4,4 @@ config.py
 venv
 .git
 __pycache__
+backupSQL
