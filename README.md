@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-Bem-vindo ao Sistema de Vendas e Monitoramento, uma solução integrada que combina Java e Python para transformar a gestão de operações comerciais. Hospedado em um servidor Ubuntu, este sistema oferece uma plataforma robusta para gerenciar vendas, monitorar desempenho e garantir segurança, tudo em tempo real.
+Bem-vindo ao Sistema de Vendas e Monitoramento, uma solução inovadora e integrada que combina o poder do Java e do Python para transformar a gestão de operações comerciais. Hospedado em um servidor Ubuntu, este sistema oferece uma plataforma robusta para gerenciar vendas, monitorar desempenho e garantir segurança, tudo em tempo real.
 
 ## Componentes e Tecnologias Utilizadas
 
@@ -29,7 +29,7 @@ Bem-vindo ao Sistema de Vendas e Monitoramento, uma solução integrada que comb
 - **Tecnologia:** Utiliza MySQL para armazenamento seguro de dados relacionados a vendas, clientes, produtos e estoque.
 - **Benefícios:** Confiabilidade, desempenho e escalabilidade.
 
-### Servidor Ubuntu
+### Servidor Ubuntu server lts 22.04
 
 - **Ambiente:** O servidor Ubuntu oferece uma plataforma estável e segura para hospedar tanto o frontend quanto o backend.
 - **Benefícios:** Robustez, segurança e suporte ativo pela comunidade.
@@ -41,7 +41,7 @@ O sistema segue uma arquitetura cliente-servidor, onde o frontend em Java intera
 ## Benefícios do Sistema
 
 - **Eficiência Operacional:** A integração entre Java e Python automatiza a gestão de vendas, reduzindo o tempo para processar pedidos e atualizar o estoque.
-  
+-   
 - **Escalabilidade:** A arquitetura modular permite fácil escalabilidade para atender ao crescimento da empresa e adicionar novas funcionalidades sem interrupções.
   
 - **Segurança Avançada:** Medidas robustas de segurança são implementadas em todas as camadas do sistema, desde a autenticação até a proteção de dados sensíveis.
