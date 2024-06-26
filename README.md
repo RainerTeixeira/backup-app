@@ -1,4 +1,4 @@
-# Sistema de Vendas (Java) e Monitoramento (Python) em Servidor Ubuntu
+# Sistema de Vendas (Java) e Monitoramento (Python) em Servidor Ubuntu 🚀
 
 ## Visão Geral
 
