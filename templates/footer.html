@@ -1,24 +1,16 @@
+<!-- footer.html -->
+ 
+<!-- Footer -->
+<footer class="footer bg-dark text-white py-3 fixed-bottom">
+  <div class="container text-center">
+    <span>&copy; <span id="currentYear"></span> Painel de Monitoramento desenvolvido por Rainer Teixeira</span>
+  </div>
+</footer>
 
-<head>
-  <!-- Bootstrap CSS -->
-  <link href="css/bootstrap.min.css" rel="stylesheet">
-</head>
+<!-- Bootstrap Bundle com Popper.js -->
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 
-
-
-  <!-- Footer -->
-  <footer class="footer bg-dark text-white py-3 fixed-bottom">
-    <div class="container text-center">
-      <span>&copy; <span id="currentYear"></span> Painel de Monitoramento desenvolvido por Rainer Teixeira</span>
-    </div>
-  </footer>
-
-  <!-- Bootstrap Bundle com Popper.js -->
-  <script src="js/bootstrap.bundle.min.js"></script>
-
-  <!-- JavaScript para atualizar o ano automaticamente -->
-  <script>
-    document.getElementById('currentYear').textContent = new Date().getFullYear();
-  </script>
-
-</html>
+<!-- JavaScript para atualizar o ano automaticamente -->
+<script>
+  document.getElementById('currentYear').textContent = new Date().getFullYear();
+</script>

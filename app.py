@@ -1,9 +1,10 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, send_file, jsonify
+from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file, jsonify
 from apscheduler.schedulers.background import BackgroundScheduler
 from mega import Mega
 import mysql.connector
 import os
-import config  # Importar as configurações
+from pytz import timezone
+import app.config as config  # Importar as configurações
 
 # Inicializa a aplicação Flask
 app = Flask(__name__)
@@ -16,16 +17,70 @@ mega_email = config.mega_credentials['email']
 mega_password = config.mega_credentials['password']
 
 # Inicializa o cliente MEGA
-mega = Mega()
-mega_client = mega.login(mega_email, mega_password)
+mega_instance = Mega()
+mega_client = mega_instance.login(mega_email, mega_password)
+
+# Configura o fuso horário para 'America/Sao_Paulo'
+os.environ['TZ'] = 'America/Sao_Paulo'
 
 # Inicializa o agendador de tarefas
 scheduler = BackgroundScheduler()
 scheduler.start()
 
+@app.route('/')
+def root():
+    """Rota raiz, redireciona para a página de login."""
+    return redirect(url_for('login'))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """Rota para login."""
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if username == config.user_credentials['username'] and password == config.user_credentials['password']:
+            session['logged_in'] = True
+            return redirect(url_for('home'))
+        else:
+            flash('Usuário ou senha incorretos.', 'error')
+    return render_template('login.html')
+
+@app.route('/home')
+def home():
+    """Rota para a página inicial."""
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    return render_template('home.html')
+
+@app.route('/mysql')
+def mysql_route():
+    """Rota para exibir informações do MySQL."""
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    mysql_info = get_mysql_info()
+    return render_template('mysql.html', mysql_info=mysql_info)
+
+@app.route('/system-info')
+def system_info():
+    """Rota para exibir informações do sistema."""
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    system_info_data = get_system_info()
+    return render_template('system_info.html', system_info=system_info_data)
+
+@app.route('/backup')
+def backup():
+    """Rota para exibir a lista de backups."""
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    backups = os.listdir(backup_dir)
+    return render_template('backup.html', backups=backups)
+
 @app.route('/logout')
 def logout():
     """Rota para logout, redireciona para a página de login."""
+    session.pop('logged_in', None)
+    flash('Você foi desconectado.', 'info')
     return redirect(url_for('login'))
 
 def get_mysql_connection():
@@ -92,37 +147,11 @@ def get_system_info():
         'cpu_info': 0  # Substitua com lógica real se necessário
     }
 
-@app.route('/')
-def root():
-    """Rota raiz, redireciona para a página inicial."""
-    return redirect(url_for('home'))
-
-@app.route('/home')
-def home():
-    """Rota para a página inicial."""
-    return render_template('home.html')
-
-@app.route('/mysql')
-def mysql():
-    """Rota para exibir informações do MySQL."""
-    mysql_info = get_mysql_info()
-    return render_template('mysql.html', mysql_info=mysql_info)
-
-@app.route('/system-info')
-def system_info():
-    """Rota para exibir informações do sistema."""
-    system_info = get_system_info()
-    return render_template('system_info.html', system_info=system_info)
-
-@app.route('/backup')
-def backup():
-    """Rota para exibir a lista de backups."""
-    backups = os.listdir(backup_dir)
-    return render_template('backup.html', backups=backups)
-
 @app.route('/download/<filename>')
 def download_backup(filename):
     """Rota para baixar um backup específico."""
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
     file_path = os.path.join(backup_dir, filename)
     if os.path.exists(file_path):
         return send_file(file_path, as_attachment=True)
@@ -133,6 +162,8 @@ def download_backup(filename):
 @app.route('/upload', methods=['POST'])
 def upload_backup():
     """Rota para fazer upload de um backup."""
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
     if 'file' not in request.files:
         flash('Nenhum arquivo selecionado')
         return redirect(url_for('backup'))
@@ -150,16 +181,22 @@ def upload_backup():
 @app.route('/api/system-info')
 def api_system_info():
     """API para obter informações do sistema."""
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
     return jsonify(get_system_info())
 
 @app.route('/api/mysql-info')
 def api_mysql_info():
     """API para obter informações do MySQL."""
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
     return jsonify(get_mysql_info())
 
 @app.route('/delete/<filename>', methods=['POST'])
 def delete_backup(filename):
     """Rota para deletar um backup específico."""
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     if os.path.exists(file_path):
         os.remove(file_path)
@@ -179,6 +216,8 @@ def upload_to_mega(file_path):
 @app.route('/trigger-backup', methods=['POST'])
 def trigger_backup():
     """Rota para iniciar manualmente um backup."""
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
     latest_backup = max([os.path.join(backup_dir, f) for f in os.listdir(backup_dir)], key=os.path.getctime)
     if latest_backup:
         upload_to_mega(latest_backup)
@@ -202,6 +241,8 @@ def test_mysql_connection():
 @app.route('/upload-favicon', methods=['GET'])
 def upload_favicon_to_mega():
     """Rota para fazer upload do favicon para o MEGA."""
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
     try:
         file_path = '/home/ubuntu/backup-app/static/img/Favicon.png'
         if not os.path.exists(file_path):
@@ -214,6 +255,8 @@ def upload_favicon_to_mega():
 @app.route('/upload-backup-to-mega', methods=['POST'])
 def upload_backup_to_mega():
     """Rota para fazer upload de um backup para o MEGA."""
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
     try:
         if 'backup_file' not in request.files:
             return 'Nenhum arquivo enviado'
@@ -234,6 +277,8 @@ def upload_backup_to_mega():
 @app.route('/api/mega-info')
 def api_mega_info():
     """API para obter informações de armazenamento do MEGA."""
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
     storage_info = get_mega_storage_info()
     if storage_info:
         return jsonify(storage_info)
