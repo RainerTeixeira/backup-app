@@ -1,24 +1,62 @@
 document.addEventListener('DOMContentLoaded', function() {
-    fetch('/api/system-info')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('disk-usage').innerText = data.disk_usage.percent;
-            document.getElementById('memory-usage').innerText = data.memory_info.percent;
-            document.getElementById('cpu-usage').innerText = data.cpu_info;
-            document.getElementById('system-temperature').innerText = data.system_temperature + '°C';
-            document.getElementById('service-status').innerText = 'Carregando...'; // Adicione o status do servidor
-            document.getElementById('os-version').innerText = 'Carregando...'; // Adicione a versão do sistema operacional
-            document.getElementById('network-usage').innerText = data.network_usage + ' Mbps'; // Adicione a utilização da rede
-            document.getElementById('services-status').innerText = 'Carregando...'; // Adicione o status dos serviços
-            document.getElementById('db-workload').innerText = data.db_workload + ' consultas por segundo'; // Adicione a carga de trabalho do banco de dados
-            document.getElementById('backup-status').innerText = 'Carregando...'; // Adicione o status dos backups
-            document.getElementById('system-resources').innerText = 'Carregando...'; // Adicione a utilização de recursos do sistema
-            document.getElementById('network-latency').innerText = data.network_latency + ' ms'; // Adicione a latência de rede
-            document.getElementById('disk-partitions').innerText = 'Carregando...'; // Adicione o espaço em disco por partição
-            document.getElementById('connected-users').innerText = 'Carregando...'; // Adicione a contagem de usuários conectados
-        })
-        .catch(error => {
-            console.error('Erro ao buscar informações do sistema:', error);
-            // Tratar erros conforme necessário
-        });
+    // Definindo o limite crítico de uso de memória em porcentagem
+    const criticalMemoryThreshold = 80; // Exemplo: 80%
+
+    // Selecionando o elemento do card de memória
+    const memoryCard = document.querySelector('#memory-usage').closest('.card');
+
+    // Função para atualizar a cor do card com base no uso de memória
+    function updateMemoryCardColor(memoryUsagePercent) {
+        if (memoryUsagePercent >= criticalMemoryThreshold) {
+            memoryCard.classList.remove('bg-success', 'bg-warning', 'bg-info', 'bg-primary');
+            memoryCard.classList.add('bg-danger');
+        } else if (memoryUsagePercent >= 60) {
+            memoryCard.classList.remove('bg-danger', 'bg-warning', 'bg-info', 'bg-primary');
+            memoryCard.classList.add('bg-success');
+        } else if (memoryUsagePercent >= 40) {
+            memoryCard.classList.remove('bg-danger', 'bg-success', 'bg-info', 'bg-primary');
+            memoryCard.classList.add('bg-warning');
+        } else if (memoryUsagePercent >= 20) {
+            memoryCard.classList.remove('bg-danger', 'bg-success', 'bg-warning', 'bg-primary');
+            memoryCard.classList.add('bg-info');
+        } else {
+            memoryCard.classList.remove('bg-danger', 'bg-success', 'bg-warning', 'bg-info');
+            memoryCard.classList.add('bg-primary');
+        }
+    }
+
+    // Função simulada para obter o uso de memória (substitua pela lógica real)
+    function getMemoryUsage() {
+        return Math.floor(Math.random() * 100); // Simula um valor de uso de memória entre 0 e 100%
+    }
+
+    // Simulação de atualização periódica do uso de memória
+    setInterval(function() {
+        const memoryUsagePercent = getMemoryUsage();
+        document.getElementById('memory-usage').textContent = memoryUsagePercent + '%';
+        updateMemoryCardColor(memoryUsagePercent);
+    }, 5000); // Atualiza a cada 5 segundos (5000 milissegundos)
+
+
+
+
+
+
+});
+// system_info.js (exemplo de requisição AJAX usando jQuery)
+$(document).ready(function() {
+    $.ajax({
+        url: '/api/mega-info',
+        type: 'GET',
+        success: function(data) {
+            if (!data.error) {
+                $('#cloud-usage').text(`Espaço livre: ${data.free_space.toFixed(2)} GB`);
+            } else {
+                $('#cloud-usage').text('Erro ao carregar informações do Mega.nz');
+            }
+        },
+        error: function() {
+            $('#cloud-usage').text('Erro ao conectar-se ao servidor');
+        }
+    });
 });
