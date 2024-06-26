@@ -1,49 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Monitoramento</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="icon" type="image/png" href="/static/img/Favicon.png">
+
+    <!-- Bootstrap CSS -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Estilos personalizados -->
+    <style>
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .card-text {
+            text-align: justify;
+        }
+    </style>
 </head>
 
-{% include 'header.html' %}
+<body class="">
+    {% include 'header.html' %}
 
-
-    <section class="features">
+    <section class="features py-5">
         <div class="container">
-            <h2>Principais Funcionalidades</h2>
-            <div class="feature-item">
-                <img src="{{ url_for('static', filename='images/feature-1.png') }}" alt="Feature 1">
-                <h3>Monitoramento em Tempo Real</h3>
-                <p>Acompanhe em tempo real o desempenho do sistema e os recursos utilizados.</p>
-            </div>
-            <div class="feature-item">
-                <img src="{{ url_for('static', filename='images/feature-2.png') }}" alt="Feature 2">
-                <h3>Backup Automático</h3>
-                <p>Realize backups automáticos para garantir a segurança dos seus dados.</p>
-            </div>
-            <div class="feature-item">
-                <img src="{{ url_for('static', filename='images/feature-3.png') }}" alt="Feature 3">
-                <h3>Análise de Dados</h3>
-                <p>Análise detalhada de dados para otimização de desempenho e tomada de decisões.</p>
+            <h2 class="text-center mb-4">Principais Funcionalidades</h2>
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                <div class="col mb-4">
+                    <div class="card h-100 border-0 shadow">
+                        <div class="card-body">
+                            <h3 class="card-title"><i class="bi bi-speedometer2"></i> Monitoramento em Tempo Real</h3>
+                            <p class="card-text">Acompanhe em tempo real o desempenho do sistema e os recursos
+                                utilizados para tomar decisões informadas. Monitore métricas essenciais, como
+                                utilização de CPU, memória e tráfego de rede.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col mb-4">
+                    <div class="card h-100 border-0 shadow">
+                        <div class="card-body">
+                            <h3 class="card-title"><i class="bi bi-cloud-arrow-up-fill"></i> Backup Automático</h3>
+                            <p class="card-text">Realize backups automáticos de forma programada para garantir a
+                                segurança dos seus dados em caso de falhas de hardware ou erros humanos. Mantenha seus
+                                dados protegidos e a continuidade dos negócios assegurada.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col mb-4">
+                    <div class="card h-100 border-0 shadow">
+                        <div class="card-body">
+                            <h3 class="card-title"><i class="bi bi-bar-chart-line-fill"></i> Análise de Dados</h3>
+                            <p class="card-text">Obtenha insights detalhados através da análise de dados para
+                                otimização de processos e melhorias contínuas. Identifique padrões, tendências e
+                                gargalos para tomar decisões estratégicas com base em dados precisos e confiáveis.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="about">
+    <section class="about py-5">
         <div class="container">
-            <h2>Sobre o Sistema</h2>
-            <p>O Sistema de Monitoramento e Backup foi desenvolvido para proporcionar uma gestão eficiente e segura dos recursos de TI da sua empresa.</p>
-            <p>Com funcionalidades avançadas e uma interface intuitiva, você pode gerenciar, monitorar e proteger seus dados de forma eficaz.</p>
+            <h2 class="text-center mb-4">Sobre o Sistema</h2>
+            <p class="text-center">O Sistema de Monitoramento e Backup foi desenvolvido para proporcionar uma gestão
+                eficiente e segura dos recursos de TI da sua empresa.</p>
+            <p class="text-center">Com funcionalidades avançadas e uma interface intuitiva, você pode gerenciar,
+                monitorar e proteger seus dados de forma eficaz. Este sistema é projetado para empresas que valorizam a
+                segurança e a disponibilidade contínua dos seus dados críticos.</p>
+            <p class="text-center">Além de monitorar e proteger, o sistema oferece uma variedade de ferramentas
+                integradas para simplificar a administração de backups e análise de dados. Desde a configuração de
+                políticas de backup até a geração de relatórios detalhados de desempenho, cada funcionalidade foi
+                projetada para maximizar a eficiência operacional e garantir a conformidade com normas de segurança
+                rigorosas.</p>
+            <p class="text-center">Com uma abordagem centrada na usabilidade, o Sistema de Monitoramento e Backup
+                permite que administradores de TI e equipes técnicas concentrem seus esforços em estratégias proativas
+                de gestão de dados, minimizando o tempo dedicado a tarefas operacionais rotineiras.</p>
+            <p class="text-center">Seja para pequenas, médias ou grandes empresas, a flexibilidade e escalabilidade do
+                sistema garantem que ele se adapte às necessidades específicas de cada ambiente, oferecendo suporte
+                contínuo à operação eficiente e segura dos recursos de TI essenciais para o sucesso do negócio.</p>
         </div>
     </section>
 
     {% include 'footer.html' %}
 
-
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <!-- Bootstrap Bundle (inclui Popper) e scripts personalizados -->
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 
 </html>

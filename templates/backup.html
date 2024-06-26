@@ -1,43 +1,160 @@
-<!-- templates/backup.html -->
+<!-- home.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Backup</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>Backups Disponíveis</title>
+    <link rel="icon" type="image/png" href="/static/img/Favicon.png">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/Favicon.png') }}">
+    <script src="{{ url_for('static', filename='js/mysql.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link href="{{ url_for('static', filename='css/bootstrap-icons.css') }}" rel="stylesheet"
 </head>
 <body>
-    <div class="container">
-        <h1>Backups Disponíveis</h1>
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('index') }}">Home</a></li>
-                <li><a href="{{ url_for('mysql') }}">MySQL</a></li>
-                <li><a href="{{ url_for('system_info') }}">Informações do Sistema</a></li>
-                <li><a href="{{ url_for('backup') }}">Backup</a></li>
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
-            </ul>
-        </nav>
-        <ul>
-            {% for filename in backups %}
-                <li>
-                    <a href="{{ url_for('download_backup', filename=filename) }}">{{ filename }}</a>
-                </li>
-            {% endfor %}
-        </ul>
-        <h2>Fazer Backup Manual</h2>
-        <form action="{{ url_for('upload_backup') }}" method="post" enctype="multipart/form-data">
-            <input type="file" name="file" id="file" required>
-            <button type="submit">Enviar Backup</button>
-        </form>
-    </div>
-</body>
+    {% include 'header.html' %}
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title h4">Backups Realizados</h2>
+                        <ul class="list-group">
+                            <li class="list-group-item"><a href="{{ url_for('download_backup', filename='SQLQuery2.sql') }}">SQLQuery2.sql</a> <button class="btn btn-danger btn-sm float-right">Excluir</button></li>
+                            <li class="list-group-item"><a href="{{ url_for('download_backup', filename='SQLQuery3.sql') }}">SQLQuery3.sql</a> <button class="btn btn-danger btn-sm float-right">Excluir</button></li>
+                            <!-- Adicionar mais backups conforme necessário -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title h4">Fazer Backup Manual</h2>
+                        <form action="{{ url_for('upload_backup') }}" method="post" enctype="multipart/form-data" class="form-inline">
+                            <div class="form-group mb-2">
+                                <label for="file" class="sr-only">Selecione um arquivo:</label>
+                                <input type="file" class="form-control-file" name="file" id="file" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary mb-2 ml-2">Enviar Backup</button>
+                        </form>
+                        <!-- Botão para acionar backup imediato -->
+                        <form action="{{ url_for('trigger_backup') }}" method="post">
+                            <button type="submit" class="btn btn-success mt-2">Acionar Backup Agora</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title h4">Backups Agendados</h2>
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                Backup Diário - 03:00 AM <button class="btn btn-info btn-sm ml-2">Detalhes</button> <button class="btn btn-danger btn-sm ml-2">Cancelar</button>
+                            </li>
+                            <li class="list-group-item">
+                                Backup Semanal - Seg, 02:00 AM <button class="btn btn-info btn-sm ml-2">Detalhes</button> <button class="btn btn-danger btn-sm ml-2">Cancelar</button>
+                            </li>
+                            <!-- Adicionar mais backups agendados conforme necessário -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title h4">Informações do MySQL</h2>
+                        <div id="mysql-info"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title h4">Estatísticas de Uso de Armazenamento</h2>
+                        <canvas id="storageChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title h4">Últimos Backups Realizados</h2>
+                        <ul class="list-group">
+                            <li class="list-group-item">SQLQuery1.sql - 2024-06-30 14:30:00 <button class="btn btn-danger btn-sm float-right">Excluir</button></li>
+                            <li class="list-group-item">BackupImportante.sql - 2024-06-29 16:45:00 <button class="btn btn-danger btn-sm float-right">Excluir</button></li>
+                            <!-- Adicionar mais backups conforme necessário -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title h4">Enviar Backup para o Mega.nz</h2>
+                        <!-- Verifique o nome da rota 'upload_backup_to_mega' aqui -->
+                        <form action="{{ url_for('upload_backup_to_mega') }}" method="post" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="backup-file">Selecione o arquivo de backup:</label>
+                                <input type="file" class="form-control-file" id="backup-file" name="backup_file" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Enviar para o Mega.nz</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+            
+    {% include 'footer.html' %}
+
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Função para carregar informações do MySQL via AJAX
+            function loadMySQLInfo() {
+                $.ajax({
+                    url: '/api/mysql-info',
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.error) {
+                            $('#mysql-info').html('<p class="text-danger">Erro ao carregar informações do MySQL: ' + response.error + '</p>');
+                        } else {
+                            var html = '<p>Status do MySQL:</p><ul class="list-group">';
+                            response.forEach(function(item) {
+                                html += '<li class="list-group-item">' + item[0] + ': ' + item[1] + '</li>';
+                            });
+                            html += '</ul>';
+                            $('#mysql-info').html(html);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $('#mysql-info').html('<p class="text-danger">Erro ao carregar informações do MySQL.</p>');
+                    }
+                });
+            }
+
+            // Carrega as informações do MySQL ao carregar a página
+            loadMySQLInfo();
+        });
 
 
-{% include 'footer.html' %}
-
-
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+    </script>
+    
+        <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+    
+        </script>
 </body>
 </html>
