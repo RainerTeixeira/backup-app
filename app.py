@@ -1,131 +1,128 @@
-# app.py
-
-from flask import Flask, render_template, send_file, request, redirect, url_for, flash, jsonify
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-import os
+from flask import Flask, render_template, redirect, url_for, flash, request, send_file, jsonify
 from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.cron import CronTrigger
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
+from mega import Mega
 import mysql.connector
-import psutil
+import os
+import config  # Importar as configurações
 
+# Inicializa a aplicação Flask
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = '/home/ubuntu/backup-app/backupSQL'
-app.secret_key = 'sua_chave_secreta_aqui'
+app.config['UPLOAD_FOLDER'] = config.app_config['UPLOAD_FOLDER']
+app.secret_key = config.app_config['SECRET_KEY']
 
+# Configurações do diretório de backup e credenciais do MEGA
 backup_dir = app.config['UPLOAD_FOLDER']
-credentials_path = '/home/ubuntu/backup-app/backup-Chave-Google-427505-7e5ba27b4500.json'
+mega_email = config.mega_credentials['email']
+mega_password = config.mega_credentials['password']
 
-login_manager = LoginManager()
-login_manager.init_app(app)
+# Inicializa o cliente MEGA
+mega = Mega()
+mega_client = mega.login(mega_email, mega_password)
 
+# Inicializa o agendador de tarefas
 scheduler = BackgroundScheduler()
 scheduler.start()
 
-# Usuário de exemplo para autenticação
-class User(UserMixin):
-    def __init__(self, id):
-        self.id = id
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User(user_id)
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        if username == 'ubuntu' and password == 'ubuntu':  # Simples validação de usuário
-            user = User(id=1)
-            login_user(user)
-            return redirect(url_for('index'))
-        else:
-            flash('Credenciais inválidas')
-    return render_template('login.html')
-
 @app.route('/logout')
-@login_required
 def logout():
-    logout_user()
+    """Rota para logout, redireciona para a página de login."""
     return redirect(url_for('login'))
 
-# Upload para o Google Drive
-def upload_to_google_drive(filename):
-    scopes = ['https://www.googleapis.com/auth/drive.file']
-    credentials = service_account.Credentials.from_service_account_file(credentials_path, scopes=scopes)
-    service = build('drive', 'v3', credentials=credentials)
-
-    file_metadata = {'name': os.path.basename(filename)}
-    media = {'mimeType': 'application/octet-stream', 'body': open(filename, 'rb')}
-    service.files().create(body=file_metadata, media_body=media).execute()
-
-# Agendamento de backups
-def schedule_backup():
-    scheduler.add_job(upload_to_google_drive, CronTrigger(hour=11, minute=0), args=[latest_backup()])
-
-def latest_backup():
-    backups = os.listdir(backup_dir)
-    if backups:
-        backups.sort(key=lambda x: os.path.getmtime(os.path.join(backup_dir, x)), reverse=True)
-        return os.path.join(backup_dir, backups[0])
-    else:
-        return None
-
-# Informações do MySQL
-def get_mysql_info():
+def get_mysql_connection():
+    """Função para obter a conexão com o banco de dados MySQL."""
     try:
         connection = mysql.connector.connect(
-            user='venda', password='Vend@171!', host='192.168.1.250', database='dbrsvendas'
+            user=config.mysql_credentials['user'], 
+            password=config.mysql_credentials['password'], 
+            host=config.mysql_credentials['host'], 
+            database=config.mysql_credentials['database']
         )
-        cursor = connection.cursor()
-        cursor.execute("SHOW STATUS")
-        status = cursor.fetchall()
-        return status
+        return connection
     except mysql.connector.Error as err:
-        return {'error': str(err)}
-    finally:
-        if connection:
-            connection.close()
+        print(f"Erro ao conectar ao MySQL: {err}")
+        return None
 
-# Informações do sistema
+def get_mysql_info():
+    """Função para obter informações de status do MySQL."""
+    connection = get_mysql_connection()
+    if connection:
+        try:
+            cursor = connection.cursor()
+            cursor.execute("SHOW STATUS")
+            status = cursor.fetchall()
+            return status
+        except mysql.connector.Error as err:
+            print(f"Erro ao executar consulta MySQL: {err}")
+            return {'error': str(err)}
+        finally:
+            connection.close()
+    else:
+        return {'error': 'Não foi possível conectar ao MySQL'}
+
+def get_mega_storage_info():
+    """Função para obter informações de armazenamento do MEGA."""
+    try:
+        # Logar no Mega com as credenciais definidas anteriormente
+        account_info = mega_client.get_user()
+
+        # Calcular o espaço disponível
+        total_space = account_info['total_space']
+        used_space = account_info['used_space']
+        free_space = total_space - used_space
+
+        # Formatar os valores para exibição
+        total_space_gb = total_space / (1024 * 1024 * 1024)
+        used_space_gb = used_space / (1024 * 1024 * 1024)
+        free_space_gb = free_space / (1024 * 1024 * 1024)
+
+        return {
+            'total_space': total_space_gb,
+            'used_space': used_space_gb,
+            'free_space': free_space_gb
+        }
+    except Exception as e:
+        print(f"Erro ao obter informações do Mega: {str(e)}")
+        return None
+
 def get_system_info():
-    disk_usage = psutil.disk_usage('/')
-    memory_info = psutil.virtual_memory()
-    cpu_info = psutil.cpu_percent(interval=1)
+    """Função para obter informações do sistema."""
     return {
-        'disk_usage': disk_usage._asdict(),
-        'memory_info': memory_info._asdict(),
-        'cpu_info': cpu_info
+        'disk_usage': {'total': 0, 'used': 0, 'free': 0},  # Substitua com lógica real se necessário
+        'memory_info': {'total': 0, 'used': 0, 'free': 0},  # Substitua com lógica real se necessário
+        'cpu_info': 0  # Substitua com lógica real se necessário
     }
 
 @app.route('/')
-@login_required
-def index():
+def root():
+    """Rota raiz, redireciona para a página inicial."""
+    return redirect(url_for('home'))
+
+@app.route('/home')
+def home():
+    """Rota para a página inicial."""
     return render_template('home.html')
 
 @app.route('/mysql')
-@login_required
 def mysql():
+    """Rota para exibir informações do MySQL."""
     mysql_info = get_mysql_info()
     return render_template('mysql.html', mysql_info=mysql_info)
 
 @app.route('/system-info')
-@login_required
 def system_info():
+    """Rota para exibir informações do sistema."""
     system_info = get_system_info()
     return render_template('system_info.html', system_info=system_info)
 
 @app.route('/backup')
-@login_required
 def backup():
+    """Rota para exibir a lista de backups."""
     backups = os.listdir(backup_dir)
     return render_template('backup.html', backups=backups)
 
 @app.route('/download/<filename>')
-@login_required
 def download_backup(filename):
+    """Rota para baixar um backup específico."""
     file_path = os.path.join(backup_dir, filename)
     if os.path.exists(file_path):
         return send_file(file_path, as_attachment=True)
@@ -134,8 +131,8 @@ def download_backup(filename):
         return redirect(url_for('backup'))
 
 @app.route('/upload', methods=['POST'])
-@login_required
 def upload_backup():
+    """Rota para fazer upload de um backup."""
     if 'file' not in request.files:
         flash('Nenhum arquivo selecionado')
         return redirect(url_for('backup'))
@@ -147,23 +144,101 @@ def upload_backup():
 
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(file_path)
-    flash('Backup enviado com sucesso')
+    flash('Backup enviado com sucesso', 'success')
     return redirect(url_for('backup'))
 
-# API para informações do sistema (AJAX)
 @app.route('/api/system-info')
-@login_required
 def api_system_info():
+    """API para obter informações do sistema."""
     return jsonify(get_system_info())
 
-# API para informações do MySQL (AJAX)
 @app.route('/api/mysql-info')
-@login_required
 def api_mysql_info():
+    """API para obter informações do MySQL."""
     return jsonify(get_mysql_info())
 
-# Iniciar o agendamento de backups
-schedule_backup()
+@app.route('/delete/<filename>', methods=['POST'])
+def delete_backup(filename):
+    """Rota para deletar um backup específico."""
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        flash(f'Backup {filename} excluído com sucesso', 'success')
+    else:
+        flash('Backup não encontrado', 'error')
+    return redirect(url_for('backup'))
+
+def upload_to_mega(file_path):
+    """Função para fazer upload de um arquivo para o MEGA."""
+    try:
+        mega_client.upload(file_path)
+        print(f'{file_path} enviado para o MEGA com sucesso.')
+    except Exception as e:
+        print(f'Erro ao enviar {file_path} para o MEGA: {str(e)}')
+
+@app.route('/trigger-backup', methods=['POST'])
+def trigger_backup():
+    """Rota para iniciar manualmente um backup."""
+    latest_backup = max([os.path.join(backup_dir, f) for f in os.listdir(backup_dir)], key=os.path.getctime)
+    if latest_backup:
+        upload_to_mega(latest_backup)
+        flash('Backup iniciado manualmente', 'info')
+    else:
+        flash('Nenhum backup encontrado para enviar.', 'error')
+    return redirect(url_for('backup'))
+
+@app.route('/test-mysql')
+def test_mysql_connection():
+    """Rota para testar a conexão com o MySQL."""
+    try:
+        connection = get_mysql_connection()
+        if connection:
+            return 'Conexão MySQL funcionando corretamente!'
+        else:
+            return 'Erro ao conectar ao MySQL. Verifique as configurações.'
+    except Exception as e:
+        return f"Erro ao testar a conexão MySQL: {str(e)}"
+
+@app.route('/upload-favicon', methods=['GET'])
+def upload_favicon_to_mega():
+    """Rota para fazer upload do favicon para o MEGA."""
+    try:
+        file_path = '/home/ubuntu/backup-app/static/img/Favicon.png'
+        if not os.path.exists(file_path):
+            return 'Arquivo não encontrado'
+        upload_to_mega(file_path)
+        return 'Favicon enviado para o MEGA com sucesso.'
+    except Exception as e:
+        return f'Erro ao enviar favicon para o MEGA: {str(e)}'
+
+@app.route('/upload-backup-to-mega', methods=['POST'])
+def upload_backup_to_mega():
+    """Rota para fazer upload de um backup para o MEGA."""
+    try:
+        if 'backup_file' not in request.files:
+            return 'Nenhum arquivo enviado'
+
+        backup_file = request.files['backup_file']
+        if backup_file.filename == '':
+            return 'Nome de arquivo inválido'
+
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], backup_file.filename)
+        backup_file.save(file_path)
+        
+        upload_to_mega(file_path)
+
+        return 'Upload bem-sucedido para o Mega.nz'
+    except Exception as e:
+        return f'Ocorreu um erro: {str(e)}'
+
+@app.route('/api/mega-info')
+def api_mega_info():
+    """API para obter informações de armazenamento do MEGA."""
+    storage_info = get_mega_storage_info()
+    if storage_info:
+        return jsonify(storage_info)
+    else:
+        return jsonify({'error': 'Não foi possível obter informações do Mega.nz'})
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='192.168.1.250', port=80)
