@@ -1,20 +1,18 @@
-from flask import redirect, url_for, flash, session, render_template, jsonify
-from app import app
-from routes.utils import get_system_info
+from flask import render_template, redirect, url_for, session, jsonify
+from . import mysql_bp
+from utils.mysql_utils import get_mysql_info
 
-@app.route('/system-info')
-def system_info():
-    """Rota para exibir informações do sistema."""
+@mysql_bp.route('/mysql')
+def mysql():
+    """Rota para exibir informações do MySQL."""
     if not session.get('logged_in'):
-        return redirect(url_for('login'))
-    system_info_data = get_system_info()
-    return render_template('system_info.html', system_info=system_info_data)
+        return redirect(url_for('auth.login'))
+    mysql_info = get_mysql_info()
+    return render_template('mysql.html', mysql_info=mysql_info)
 
-@app.route('/api/system-info')
-def api_system_info():
-    """API para obter informações do sistema."""
+@mysql_bp.route('/api/mysql-info')
+def api_mysql_info():
+    """API para obter informações do MySQL."""
     if not session.get('logged_in'):
-        return redirect(url_for('login'))
-    return jsonify(get_system_info())
-
-# Outras rotas relacionadas às informações do sistema podem ser adicionadas aqui
+        return redirect(url_for('auth.login'))
+    return jsonify(get_mysql_info())

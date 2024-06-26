@@ -1,13 +1,8 @@
-from flask import redirect, url_for, flash, request, session, render_template
-from app import app
-import app.config as config
+from flask import render_template, redirect, url_for, flash, request, session
+from . import auth_bp
+import config
 
-@app.route('/')
-def root():
-    """Rota raiz, redireciona para a página de login."""
-    return redirect(url_for('login'))
-
-@app.route('/login', methods=['GET', 'POST'])
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     """Rota para login."""
     if request.method == 'POST':
@@ -20,18 +15,9 @@ def login():
             flash('Usuário ou senha incorretos.', 'error')
     return render_template('login.html')
 
-@app.route('/home')
-def home():
-    """Rota para a página inicial."""
-    if not session.get('logged_in'):
-        return redirect(url_for('login'))
-    return render_template('home.html')
-
-@app.route('/logout')
+@auth_bp.route('/logout')
 def logout():
     """Rota para logout, redireciona para a página de login."""
     session.pop('logged_in', None)
     flash('Você foi desconectado.', 'info')
-    return redirect(url_for('login'))
-
-# Outras rotas relacionadas à autenticação podem ser adicionadas aqui
+    return redirect(url_for('auth.login'))
