@@ -4,28 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MySQL</title>
-    <link rel="icon" type="image/png" href="/static/img/Favicon.png">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/Favicon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-icons.css') }}">
 </head>
 <body>
+    {% include 'header.html' %}
+
     <div class="container">
         <h1>Informações do MySQL</h1>
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('home') }}">Home</a></li>
-                <li><a href="{{ url_for('mysql') }}">MySQL</a></li>
-                <li><a href="{{ url_for('system_info') }}">Informações do Sistema</a></li>
-                <li><a href="{{ url_for('backup') }}">Backup</a></li>
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
-            </ul>
-        </nav>
-        <pre id="mysql-status"></pre>
+   
+        <pre id="mysql-status">
+            {% for key, value in mysql_info.items() %}
+                {{ key }}: {{ value }}{% if not loop.last %}<br>{% endif %}
+            {% endfor %}
+        </pre>
     </div>
     {% include 'footer.html' %}
     
+    <!-- Scripts JS -->
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/mysql.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 </body>
 </html>
