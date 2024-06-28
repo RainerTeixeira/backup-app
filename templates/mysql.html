@@ -1,30 +1,55 @@
+<!-- templates/mysql.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MySQL</title>
+    <title>MySQL Dashboard</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/Favicon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <!-- Incluir CSS adicional para estilos personalizados -->
+
+    <!-- Incluir CSS do Plotly para gráficos -->
+    {{ plot_div|safe }}
 </head>
 <body>
     {% include 'header.html' %}
 
     <div class="container">
         <h1>Informações do MySQL</h1>
-   
-        <pre id="mysql-status">
-            {% for key, value in mysql_info.items() %}
-                {{ key }}: {{ value }}{% if not loop.last %}<br>{% endif %}
-            {% endfor %}
-        </pre>
+
+        <!-- Exemplo de gráfico Plotly -->
+        <div id="plotly_graph">
+            {{ plot_div|safe }}
+        </div>
+
+        <!-- Exemplo de tabela -->
+        <h2>Dados da Tabela</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Coluna X</th>
+                    <th>Coluna Y</th>
+                    <!-- Adicione mais cabeçalhos conforme necessário -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in table_data %}
+                    <tr>
+                        <td>{{ row.column_x }}</td>
+                        <td>{{ row.column_y }}</td>
+                        <!-- Adicione mais colunas conforme necessário -->
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+
     {% include 'footer.html' %}
-    
+
     <!-- Scripts JS -->
     <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/mysql.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <!-- Incluir scripts JS adicionais para interatividade -->
 </body>
 </html>
