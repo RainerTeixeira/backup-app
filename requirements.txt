@@ -56,7 +56,6 @@ pyOpenSSL
 pyparsing
 pyrsistent
 pyserial
-python-apt
 python-debian
 python-magic
 pytz
