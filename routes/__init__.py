@@ -1,17 +1,15 @@
-from flask import Blueprint
+# routes/__init__.py
 
-auth_bp = Blueprint('auth', __name__)
-backup_bp = Blueprint('backup', __name__)
-mega_bp = Blueprint('mega', __name__)
-mysql_bp = Blueprint('mysql', __name__)
-system_bp = Blueprint('system', __name__)
+from flask import Blueprint          
+from .backup_routes import backup_bp        #importação correta para Backup
+from .auth_routes import auth_bp
+from .mysql_routes import mysql_bp          #importação correta para mysql_bp
+from .system_routes import system_bp        #importação correta para system_bp
+from .home_routes import home_bp            #importação correta para home_bp
 
-# Importar as rotas
-from . import auth_routes, backup_routes, mega_routes, mysql_routes, system_routes
 
 def register_blueprints(app):
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(backup_bp)
-    app.register_blueprint(mega_bp)
-    app.register_blueprint(mysql_bp)
-    app.register_blueprint(system_bp)
+    app.register_blueprint(backup_bp, url_prefix='/backup')
+    app.register_blueprint(mysql_bp, url_prefix='/mysql')
+    app.register_blueprint(system_bp, url_prefix='/system')
+    app.register_blueprint(home_bp, url_prefix='/home')
