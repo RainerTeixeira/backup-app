@@ -6,6 +6,7 @@
     <title>Backup e Monitoramento</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/Favicon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+
 </head>
 <body>
     {% include 'header.html' %}
@@ -156,11 +157,9 @@
             </tbody>
         </table>
     </div>
-
-    {% include 'footer.html' %}
-
     <!-- Scripts JS -->
     <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 </body>
+{% include 'footer.html' %}
 </html>

@@ -29,4 +29,4 @@ def logout():
     return auth_logout()
 
 if __name__ == '__main__':
-    app.run(debug=True, host='localhost', port=9000)
+    app.run(debug=True, host='192.168.1.250', port=5000)
