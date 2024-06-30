@@ -1,16 +1,11 @@
-<!-- templates/mysql.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MySQL Dashboard</title>
+    <title>Backup e Monitoramento</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/Favicon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-    <!-- Incluir CSS adicional para estilos personalizados -->
-
-    <!-- Incluir CSS do Plotly para gráficos -->
-    {{ plot_div|safe }}
 </head>
 <body>
     {% include 'header.html' %}
@@ -18,27 +13,144 @@
     <div class="container">
         <h1>Informações do MySQL</h1>
 
-        <!-- Exemplo de gráfico Plotly -->
-        <div id="plotly_graph">
-            {{ plot_div|safe }}
-        </div>
+        <!-- Informações Gerais -->
+        <h2>Informações Gerais do MySQL</h2>
+        <p>Versão: {{ mysql_info['Versão'] }}</p>
+        <p>Databases: {{ mysql_info['Databases']|join(', ') }}</p>
 
-        <!-- Exemplo de tabela -->
-        <h2>Dados da Tabela</h2>
+        <!-- Informações das Tabelas -->
+        <h2>Informações das Tabelas</h2>
         <table class="table">
             <thead>
                 <tr>
-                    <th>Coluna X</th>
-                    <th>Coluna Y</th>
-                    <!-- Adicione mais cabeçalhos conforme necessário -->
+                    <th>Nome da Tabela</th>
+                    <th>Número de Registros</th>
+                    <th>Tamanho Aproximado (KB)</th>
+                    <th>Tipo de Armazenamento</th>
                 </tr>
             </thead>
             <tbody>
-                {% for row in table_data %}
+                {% for table in tables_info %}
                     <tr>
-                        <td>{{ row.column_x }}</td>
-                        <td>{{ row.column_y }}</td>
-                        <!-- Adicione mais colunas conforme necessário -->
+                        <td>{{ table['Nome da Tabela'] }}</td>
+                        <td>{{ table['Número de Registros'] }}</td>
+                        <td>{{ table['Tamanho Aproximado (KB)'] }}</td>
+                        <td>{{ table['Tipo de Armazenamento'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Produtos Mais Vendidos -->
+        <h2>Produtos Mais Vendidos</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Quantidade Vendida</th>
+                    <th>Preço</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in top_products %}
+                    <tr>
+                        <td>{{ product['ID'] }}</td>
+                        <td>{{ product['Nome'] }}</td>
+                        <td>{{ product['Quantidade Vendida'] }}</td>
+                        <td>{{ product['Preço'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Produtos com Baixo Estoque -->
+        <h2>Produtos com Baixo Estoque</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Estoque</th>
+                    <th>Preço</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in low_stock_products %}
+                    <tr>
+                        <td>{{ product['ID'] }}</td>
+                        <td>{{ product['Nome'] }}</td>
+                        <td>{{ product['Estoque'] }}</td>
+                        <td>{{ product['Preço'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Contas Próximas ao Vencimento -->
+        <h2>Contas Próximas ao Vencimento</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Valor</th>
+                    <th>Vencimento</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for account in accounts_due %}
+                    <tr>
+                        <td>{{ account['ID'] }}</td>
+                        <td>{{ account['Cliente'] }}</td>
+                        <td>{{ account['Valor'] }}</td>
+                        <td>{{ account['Vencimento'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Contas a Receber -->
+        <h2>Contas a Receber</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Valor</th>
+                    <th>Vencimento</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for account in accounts_receivable %}
+                    <tr>
+                        <td>{{ account['ID'] }}</td>
+                        <td>{{ account['Cliente'] }}</td>
+                        <td>{{ account['Valor'] }}</td>
+                        <td>{{ account['Vencimento'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Vendas Recentes -->
+        <h2>Vendas Recentes</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Valor</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sale in recent_sales %}
+                    <tr>
+                        <td>{{ sale['ID'] }}</td>
+                        <td>{{ sale['Cliente'] }}</td>
+                        <td>{{ sale['Valor'] }}</td>
+                        <td>{{ sale['Data'] }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -50,6 +162,5 @@
     <!-- Scripts JS -->
     <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-    <!-- Incluir scripts JS adicionais para interatividade -->
 </body>
 </html>

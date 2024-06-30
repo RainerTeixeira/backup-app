@@ -3,15 +3,23 @@
 import logging
 from functools import wraps
 from flask import Blueprint, render_template, redirect, url_for, flash, session, request
-from utils.system_utils import get_system_info
 from config import user_credentials
 
+logger = logging.getLogger(__name__)
 auth_bp = Blueprint('auth', __name__)
 
-# Configuração do logging específico para este blueprint
-logger = logging.getLogger(__name__)
 
 def login_required(func):
+    """
+    Decorator que verifica se o usuário está logado antes de acessar a rota.
+
+    Este decorator verifica se a chave 'logged_in' está presente na sessão do usuário.
+    Se não estiver presente, redireciona para a página de login e exibe uma mensagem de erro.
+    Caso contrário, permite o acesso à rota decorada.
+
+    Returns:
+        function: Função decorada que requer autenticação.
+    """
     @wraps(func)
     def decorated_view(*args, **kwargs):
         if not session.get('logged_in'):
@@ -20,6 +28,10 @@ def login_required(func):
         return func(*args, **kwargs)
     return decorated_view
 
+
+############################################
+#             Rota para login.             #
+############################################
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     """Rota para login."""
@@ -39,6 +51,10 @@ def login():
     # Se o método for GET ou se houver erro no login, renderiza o template de login
     return render_template('login.html')
 
+############################################
+#     ROTA REDIRECIONAR PARA LOGOUT        #
+############################################
+
 @auth_bp.route('/logout')
 @login_required
 def logout():
@@ -48,7 +64,10 @@ def logout():
     logger.info('Usuário desconectado.')
     return redirect(url_for('auth.login'))
 
-# Rota raiz, redireciona para a página de login
+###################################################
+#  Rota raiz, redireciona para a página de login  #
+###################################################
+
 @auth_bp.route('/')
 def root():
     if session.get('logged_in'):

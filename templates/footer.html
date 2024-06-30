@@ -1,15 +1,190 @@
-<!-- footer.html -->
- 
+
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Estilos customizados para o exemplo -->
+  <style>
+    .lagrima {
+      position: fixed;
+      width: 100%; /* Largura cobrindo toda a tela */
+      height: 100%; /* Altura cobrindo toda a tela */
+      top: 0;
+      left: 0;
+      z-index: 1050;
+      display: none;
+      animation: chuva 10s ease-in-out forwards; /* Animação de 10 segundos, suave no início e no fim */
+    }
+
+    @keyframes chuva {
+      0% {
+        top: -200px; /* Inicia fora da tela acima */
+        left: calc(50% - 50px); /* Posição inicial centralizada */
+        opacity: 0; /* Começa invisível */
+        transform: translateY(-300px) rotate(0deg); /* Começa fora da tela acima */
+      }
+      10% {
+        opacity: 1; /* Começa a ficar visível */
+      }
+      50% {
+        opacity: 1; /* Meio do caminho, totalmente visível */
+        transform: translateY(calc(100vh + 100px)) rotate(360deg); /* Move para fora da tela abaixo e roda */
+      }
+      100% {
+        top: calc(100vh + 250px); /* Finaliza fora da tela abaixo */
+        left: calc(50% - 50px); /* Finaliza na posição centralizada */
+        opacity: 0; /* Torna-se invisível */
+        transform: translateY(calc(100vh + 200px)) rotate(720deg); /* Finaliza fora da tela abaixo e roda mais */
+      }
+    }
+
+    /* Efeito de matrix */
+    @keyframes matrix {
+      0% {
+        transform: translateX(0);
+      }
+      50% {
+        transform: translateX(calc(100vw - 100%));
+      }
+      100% {
+        transform: translateX(0);
+      }
+    }
+
+    .lagrima.matrix {
+      animation: matrix 10s linear infinite;
+    }
+
+    .lagrima-extra {
+      position: absolute;
+      width: 50px; /* Largura da lágrima */
+      height: 50px; /* Altura da lágrima */
+      animation: chuva-extra 30m linear infinite; /* Animação linear infinita por 30 minutos */
+    }
+
+    @keyframes chuva-extra {
+      0% {
+        top: -50px; /* Inicia fora da tela acima */
+        left: calc(50% - 25px); /* Posição inicial centralizada */
+        opacity: 0; /* Começa invisível */
+        transform: translateY(-50px) rotate(0deg); /* Começa fora da tela acima */
+      }
+      50% {
+        opacity: 1; /* Meio do caminho, totalmente visível */
+        transform: translateY(calc(100vh + 50px)) rotate(360deg); /* Move para fora da tela abaixo e roda */
+      }
+      100% {
+        top: calc(100vh + 100px); /* Finaliza fora da tela abaixo */
+        left: calc(50% - 25px); /* Finaliza na posição centralizada */
+        opacity: 0; /* Torna-se invisível */
+        transform: translateY(calc(100vh + 100px)) rotate(720deg); /* Finaliza fora da tela abaixo e roda mais */
+      }
+    }
+  </style>
+</head>
+<body>
+
 <footer class="footer bg-dark text-white py-3 fixed-bottom">
-  <div class="container text-center">
-    <span>&copy; <span id="currentYear"></span> Painel de Monitoramento desenvolvido por Rainer Teixeira</span>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col">
+        <p class="text-center">
+          <span>&copy; 2024 Painel de Monitoramento desenvolvido por Rainer Teixeira</span>
+        </p>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-danger" onclick="confirmarDesligarServidor()">
+          <i class="bi bi-power"></i> Desligar
+        </button>
+      </div>
+    </div>
   </div>
 </footer>
 
-<!-- Bootstrap Bundle com Popper.js -->
-<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+<!-- Bootstrap JS (bundle with Popper.js) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-<!-- JavaScript para atualizar o ano automaticamente -->
+<!-- Script JavaScript -->
 <script>
   document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+  function confirmarDesligarServidor() {
+    if (confirm("Tem certeza que deseja desligar o servidor?")) {
+      confirmarOffline();
+    }
+  }
+
+  function confirmarOffline() {
+    if (confirm("Tem certeza que deseja continuar? Seu sistema ficará offline.")) {
+      mostrarMensagemTristeza();
+    }
+  }
+
+  function mostrarMensagemTristeza() {
+    // Exibe a mensagem de tristeza
+    var mensagemTristeza = `
+      <div class="alert alert-warning alert-dismissible fade show position-fixed top-50 start-50 translate-middle" role="alert" style="z-index: 1050;">
+        <strong>Oh não!</strong> Desligar o sistema deixará o desenvolvedor Rainer Teixeira muito triste! 😢
+        <hr>
+        <button type="button" class="btn btn-danger btn-sm" onclick="desligarServidor()">Confirmar</button>
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="alert" onclick="exibirLagrima()">Cancelar</button>
+      </div>
+    `;
+    
+    // Adiciona a mensagem de tristeza ao corpo do documento
+    document.body.insertAdjacentHTML('beforeend', mensagemTristeza);
+  }
+
+  function desligarServidor() {
+    // Implemente sua lógica para desligar o servidor aqui
+    console.log("Desligando o servidor...");
+    
+    // Exibe um alerta de sucesso após desligar o servidor
+    var alertaFinal = `
+      <div class="alert alert-success alert-dismissible fade show position-fixed top-50 start-50 translate-middle" role="alert" style="z-index: 1050;">
+        <strong>Servidor desligado com sucesso.</strong> O sistema está offline.
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="alert">Fechar</button>
+      </div>
+    `;
+    
+    // Remove o alerta de confirmação e tristeza
+    document.querySelector('.alert-warning').remove();
+    
+    // Adiciona o alerta de sucesso ao corpo do documento
+    document.body.insertAdjacentHTML('beforeend', alertaFinal);
+
+    // Exibe a lágrima ao fechar o alerta
+    exibirLagrima();
+  }
+
+  function exibirLagrima() {
+    var lagrima = document.createElement('img');
+    lagrima.src = '/static/img/Lagrima.gif'; // Caminho para o GIF animado
+    lagrima.className = 'lagrima matrix'; // Adiciona a classe 'matrix' para aplicar o efeito de matrix
+    document.body.appendChild(lagrima);
+    lagrima.style.display = 'block';
+
+    // Define um tempo para remover a lágrima após 30 minutos
+    setTimeout(function() {
+      lagrima.style.display = 'none';
+    }, 1800000); // Lágrima fica visível por 30 minutos
+  }
+
+  // Criar efeitos adicionais para triplicar a imagem da lágrima ao redor da lágrima principal
+  setTimeout(function() {
+    for (var i = 0; i < 10; i++) {
+      setTimeout(function() {
+        var lagrimaExtra = document.createElement('img');
+        lagrimaExtra.src = '/static/img/Lagrima.gif'; // Caminho para o GIF animado
+        lagrimaExtra.className = 'lagrima lagrima-extra'; // Adiciona classe adicional para estilização
+        lagrimaExtra.style.left = Math.random() * window.innerWidth + 'px'; // Posição horizontal aleatória
+        document.body.appendChild(lagrimaExtra);
+
+        setTimeout(function() {
+          lagrimaExtra.style.top = window.innerHeight + 'px'; // Move para a parte inferior da tela
+        }, 100); // Delay inicial para criar o efeito visual
+      }, i * 180); // Intervalo de 3 minutos entre cada lágrima extra (180000 milissegundos)
+    }
+  }, 10000); // Atraso inicial para criar efeitos adicionais
 </script>
+

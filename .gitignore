@@ -99,5 +99,5 @@ venv.bak/
 
 # System files
 Thumbs.db
-
+.git
 
